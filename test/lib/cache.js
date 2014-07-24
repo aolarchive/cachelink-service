@@ -151,7 +151,7 @@ describe('cache', function () {
 			var assocPttls = [];
 			var assertPttlCloseTo = function (expect, actual, which) {
 				assert(actual <= expect && actual > expect - 15,
-					which + '(' + actual + ') expected between ' + (expect - 15) + ' and ' + expect);
+					which + ' (' + actual + ') expected between ' + (expect - 15) + ' and ' + expect);
 			};
 			for (var i = 1; i <= total; i++) {
 				assocKeys.push('s'+i);
@@ -191,7 +191,7 @@ describe('cache', function () {
 					var pttlAssocContains = pttls[1][i][2];
 					assertPttlCloseTo(pttlAssoc, pttlAssocData, 'Assoc ' + assocKeys[i] + ' Data PTTL');
 					assert(pttlAssocIn === -1, 'Assoc ' + assocKeys[i] + 'In PTTL (' + pttlAssocIn + ') expected -1');
-					assertPttlCloseTo(mainKeyPttl, pttlAssocContains, 'Assoc ' + assocKeys[i] + 'Contains PTTL');
+					assertPttlCloseTo(mainKeyPttl, pttlAssocContains, 'Assoc ' + assocKeys[i] + ' Contains PTTL');
 				}
 			}).then(done);
 		});
