@@ -1,0 +1,19 @@
+{
+	"port": 3444,
+	"redis": {
+		"host": "localhost",
+		"port": 7711
+	},
+	"broadcast": [
+		{
+			"host": "localhost",
+			"port": 80
+		}
+	],
+	"clearLaterInterval": 60,
+	"clearLaterSyncKey": "___clear_later_sync",
+	"cronChannel": "___cron_channel",
+	"clearLaterSet": "___clear_later_set",
+	"clearNowSet": "___clear_now_set",
+	"clearNowAmountPerIteration": 5
+}
