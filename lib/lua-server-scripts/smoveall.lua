@@ -5,10 +5,11 @@
 local key    = KEYS[1]
 local dest   = ARGV[1]
 local result = nil
+local call   = redis.call
 
 result = call('sunionstore', dest, dest, key)
 
-if result != nil then
+if result ~= nil then
 	result = call('del', key)
 end
 

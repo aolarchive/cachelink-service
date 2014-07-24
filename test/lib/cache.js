@@ -1,33 +1,11 @@
-var Promise = require('bluebird');
-var assert  = require('assert');
-var setup   = require('./setup.js');
-var config  = setup.config;
-var redis   = setup.redis;
-var cache   = setup.cache;
-
-function getAllData() {
-	return redis('keys',['*']).then(function (keys) {
-		var result = {};
-		return Promise.all(keys.map(function (k) {
-			switch (k[0]) {
-				case 'd':
-					var g = redis('get', [k]);
-					g.then(function (v) { result[k] = JSON.parse(v); });
-					return g;
-				case 'c':
-				case 'i':
-					var m = redis('smembers', [k]);
-					m.then(function (s) { result[k] = s.sort(); });
-					return m;
-				default:
-					result[k] = null;
-					break;
-			}
-		})).then(function () {
-			return result;
-		});
-	});
-}
+var Promise    = require('bluebird');
+var assert     = require('assert');
+var setup      = require('./setup.js');
+var config     = setup.config;
+var redis      = setup.redis;
+var cache      = setup.cache;
+var cron       = setup.cron;
+var getAllData = setup.getAllData;
 
 describe('cache', function () {
 
