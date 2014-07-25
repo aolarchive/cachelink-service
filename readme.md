@@ -6,8 +6,10 @@ for *sets* and *clears*. Gets should always go directly to Redis in production f
 ## Running
 
 ```
-bin/cachelink
+bin/cachelink path/to/config.json
 ```
+
+See config options below.
 
 ## Why?
 
@@ -63,3 +65,24 @@ This is useful for cache keys which have the potential to be invalidated in quic
 de-dupe those clears and schedule them to happen at a regular interval. 
 This enables cache to maintain a good hit-rate for those keys, even while being cleared quickly.
 
+
+## Config Options
+
+```
+{
+	  port   : // the port to run the service on
+	, redis {
+	  host   : // the redis host
+	  port   : // the redis port
+		prefix : // (optional) a prefix to use for redis keys
+	}
+	, broadcast                  : // an array of HTTP endpoints to broadcast to during cache sets, clears, and clear-laters
+	, broadcastTimeout           : // (optional, defaults to 5 seconds) how long to wait for a response when broadcasting
+	, clearLaterInterval         : // (optional, defaults to 1 minute) how often to clear all keys in the "clear-later" set
+	, clearLaterSyncKey          : // (optional) a redis key to use for synchronizing the cron
+	, cronChannel                : // (optional) a redis channel to use for cron cluster synchronization
+	, clearLaterSet              : // (optional) a redis key to use for the "clear-later" set
+	, clearNowSet                : // (optional) a redis key to use for the "clear-now" set
+	, clearNowAmountPerIteration : // (optional) how many keys to clear consecutively during a clear-now process
+}
+```
