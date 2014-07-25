@@ -1,6 +1,6 @@
 var Promise    = require('bluebird');
 var assert     = require('assert');
-var setup      = require('./setup.js');
+var setup      = require('./setup.js')(require(__dirname + '/../config.json'));
 var config     = setup.config;
 var redis      = setup.redis;
 var cache      = setup.cache;

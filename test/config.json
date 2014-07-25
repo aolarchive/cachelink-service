@@ -1,16 +1,13 @@
 {
-	"port": 3444,
+	"port": 8889,
 	"redis": {
 		"host": "localhost",
 		"port": 7711
 	},
 	"broadcast": [
-		{
-			"host": "localhost",
-			"port": 80
-		}
+		"http://localhost:4401"
 	],
-	"clearLaterInterval": 1,
+	"clearLaterInterval": 5,
 	"clearLaterSyncKey": "___clear_later_sync",
 	"cronChannel": "___cron_channel",
 	"clearLaterSet": "___clear_later_set",

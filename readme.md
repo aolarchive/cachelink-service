@@ -3,6 +3,12 @@
 This service fronts a Redis cache and adds the ability to set cache key associations. It should be used primarily
 for *sets* and *clears*. Gets should always go directly to Redis in production for fast access.
 
+## Running
+
+```
+bin/cachelink
+```
+
 ## Why?
 
 This service provides the ability to maintain associations between cache keys for deep cache busting.
@@ -45,7 +51,7 @@ If `"John"` was associated to another parent, it would also be cleared.
 
 If `"John"` is cleared, it will be deleted and the key will removed from all sets defined in the "in" set.
 
-Related forward and backward associations set are kept up to date whenever a cache key is set.
+Related forward and backward association sets are kept up to date whenever a cache key is set.
 
 ## Clear Later
 
@@ -53,7 +59,7 @@ This service also supports the notion of clearing a cache key at a later time.
 Clients can request a key be cleared later. The service adds those keys to a set then uses an internal cron to perform
 a clear of all those keys on a regular interval (this is configurable).
 
-This is extremely useful for cache keys which have the potential to be invalidated in quick succession. This will
+This is useful for cache keys which have the potential to be invalidated in quick succession. This will
 de-dupe those clears and schedule them to happen at a regular interval. 
 This enables cache to maintain a good hit-rate for those keys, even while being cleared quickly.
 
