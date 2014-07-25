@@ -72,9 +72,9 @@ This enables cache to maintain a good hit-rate for those keys, even while being 
 {
 	  port   : // the port to run the service on
 	, redis {
-	  host   : // the redis host
-	  port   : // the redis port
-		prefix : // (optional) a prefix to use for redis keys
+		  host   : // the redis host
+		, port   : // the redis port
+		, prefix : // (optional) a prefix to use for redis keys
 	}
 	, broadcast                  : // an array of HTTP endpoints to broadcast to during cache sets, clears, and clear-laters
 	, broadcastTimeout           : // (optional, defaults to 5 seconds) how long to wait for a response when broadcasting
