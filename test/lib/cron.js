@@ -139,7 +139,7 @@ describe('cron', function () {
 			var startedClearNow = false;
 			cron.startClearNowProcess = function () { startedClearNow = true; };
 			redis('flushdb',[]).then(function () {
-				return redis('set', [syncKey, 'foo', 'px', 100000, 'nx'])
+				return redis('set', [syncKey, 'foo', 'px', 3000, 'nx'])
 			}).then(function () {
 				return cron.checkSyncKey();
 			}).then(function (success) {

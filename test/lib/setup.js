@@ -1,5 +1,5 @@
 var Promise = require('bluebird');
-var config  = require('../../lib/config.js')(__dirname + '/../config.json');
+var config  = require('../../lib/config.js')(require(__dirname + '/../config.json'));
 var log     = require('./log.js')(config);
 var redis   = require('../../lib/redis.js')(config, log);
 var cache   = require('../../lib/cache.js')(config, log, redis);
