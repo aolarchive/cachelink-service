@@ -70,7 +70,7 @@ This enables cache to maintain a good hit-rate for those keys, even while being 
 
 ```
 {
-	  port   : // the port to run the service on
+	  port     : // the port to run the service on
 	, redis {
 		  host   : // the redis host
 		, port   : // the redis port
@@ -83,6 +83,6 @@ This enables cache to maintain a good hit-rate for those keys, even while being 
 	, cronChannel                : // (optional) a redis channel to use for cron cluster synchronization
 	, clearLaterSet              : // (optional) a redis key to use for the "clear-later" set
 	, clearNowSet                : // (optional) a redis key to use for the "clear-now" set
-	, clearNowAmountPerIteration : // (optional) how many keys to clear consecutively during a clear-now process
+	, clearNowAmountPerIteration : // (optional, defaults to 3) how many keys to pop and clear per iteration during the clear-now process
 }
 ```
