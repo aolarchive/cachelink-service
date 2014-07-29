@@ -11,51 +11,6 @@ bin/cachelink path/to/config.json
 
 See config options below.
 
-## API
-
-- Get an item: `GET /:key`
-	```
-	GET /foo
-	=>
-	'fooValue'
-	```
-
-- Get multiple items: `GET /?k=:key1&k=:key2&...`
-	```
-	GET /?k=foo&k=bar&k=baz
-	=>
-	["fooValue", "barValue", "bazValue"]
-	```
-
-- Set an item: `PUT /`
-	```
-	PUT /
-	{"key":"foo", "data":"fooValue", "seconds":1.5, "associations":["bar", "baz"]}
-	=>
-	{"success": true, /* ...details... */}
-	```
-
-- Clear an item: `DELETE /:key`
-	```
-	DELETE /foo
-	=>
-	{"success": true, /* ...details... */}
-	```
-	You can also specify the amount of association levels to clear:
-	```
-	DELETE /foo?levels=all
-	DELETE /foo?levels=none
-	DELETE /foo?levels=3
-	```
-
-- Clear an item later: `PUT /clear-later`
-	```
-	PUT /clear-later
-	{"keys":["foo", "bar"]}
-	=>
-	{"success": true, /* ...details... */}
-	```
-
 ## Why?
 
 This service provides the ability to maintain associations between cache keys for deep cache busting.
@@ -110,6 +65,50 @@ This is useful for cache keys which have the potential to be invalidated in quic
 de-dupe those clears and schedule them to happen at a regular interval. 
 This enables cache to maintain a good hit-rate for those keys, even while being cleared quickly.
 
+## API
+
+- Get an item: `GET /:key`
+	```
+	GET /foo
+	=>
+	'fooValue'
+	```
+
+- Get multiple items: `GET /?k=:key1&k=:key2&...`
+	```
+	GET /?k=foo&k=bar&k=baz
+	=>
+	["fooValue", "barValue", "bazValue"]
+	```
+
+- Set an item: `PUT /`
+	```
+	PUT /
+	{"key":"foo", "data":"fooValue", "seconds":1.5, "associations":["bar", "baz"]}
+	=>
+	{"success": true, /* ...details... */}
+	```
+
+- Clear an item: `DELETE /:key`
+	```
+	DELETE /foo
+	=>
+	{"success": true, /* ...details... */}
+	```
+	You can also specify the amount of association levels to clear:
+	```
+	DELETE /foo?levels=all
+	DELETE /foo?levels=none
+	DELETE /foo?levels=3
+	```
+
+- Clear an item later: `PUT /clear-later`
+	```
+	PUT /clear-later
+	{"keys":["foo", "bar"]}
+	=>
+	{"success": true, /* ...details... */}
+	```
 
 ## Config Options
 
