@@ -346,6 +346,7 @@ describe('cache', function () {
 	describe('#clearNow', function () {
 
 		it('should clear all items in the clear-now set', function (done) {
+			this.slow(100);
 			var s,e;
 			var keyCount    = 30;
 			var clearNowSet = config.clearNowSet;
