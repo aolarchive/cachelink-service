@@ -117,7 +117,8 @@ describe('cache', function () {
 				return Promise.all(data.map(function (d) {
 					return cache.set({key: d[0], data: d[0], millis: 15, associations: d[1]});
 				}))
-			}).then(function () {
+			}).then(function (results) {
+				assert(!results.filter(function(r) {return !r.success;}).length);
 				return redis('keys', ['*']);
 			}).then(function (allKeys) {
 				allKeys.sort();
@@ -209,6 +210,7 @@ describe('cache', function () {
 				return cache.clear({keys:['hello']});
 			}).then(function (cleared) {
 				assert.deepEqual(cleared, {
+					success: true,
 					level: 1,
 					keys: [ 'hello' ],
 					keysCount: 1,
@@ -327,7 +329,7 @@ describe('cache', function () {
 			redis('flushdb', []).then(function () {
 				return cache.clearLater({keys:mem});
 			}).then(function (added) {
-				assert.equal(added, 4);
+				assert.deepEqual(added, {success:true,added:4});
 				return redis('smembers', [config.clearLaterSet]);
 			}).then(function (members) {
 				assert.deepEqual(members.sort(), mem);
@@ -335,7 +337,7 @@ describe('cache', function () {
 				mem = mem.concat(['e','f','g']);
 				return cache.clearLater({keys:append});
 			}).then(function (added) {
-				assert.equal(added, 3);
+				assert.deepEqual(added, {success:true,added:3});
 				return redis('smembers', [config.clearLaterSet]);
 			}).then(function (members) {
 				assert.deepEqual(members.sort(), mem);
