@@ -5,7 +5,7 @@
 		"port": 7711
 	},
 	"broadcast": [
-		"http://localhost:4401"
+
 	],
 	"clearLaterInterval": 5,
 	"clearLaterSyncKey": "___clear_later_sync",

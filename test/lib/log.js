@@ -1,5 +1,8 @@
 var winston = require('winston');
 
-winston.add(winston.transports.File, {filename: 'test.log'});
-winston.remove(winston.transports.Console);
-module.exports = winston;
+module.exports = new winston.Logger({
+	transports: [
+		new winston.transports.File({filename: 'test.log', level: 'debug'})
+		//new winston.transports.Console({level: 'debug'})
+	]
+});

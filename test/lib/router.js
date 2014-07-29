@@ -3,7 +3,8 @@ var request          = require('request');
 var assert           = require('assert');
 var cachelinkService = require('../../lib/index.js');
 var config           = require(__dirname + '/../config.json');
-var service          = cachelinkService(config);
+var log              = require(__dirname + '/log.js');
+var service          = cachelinkService(config, { log: function () { return log; }});
 
 service.start();
 
