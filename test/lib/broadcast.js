@@ -50,9 +50,9 @@ function observeAllServicesCron(noreply, field, wrapper, done, timeout) {
 }
 
 function observeAllServices(noreply, objGet, field, wrapper, done, timeout) {
-	timeout = timeout || 750;
+	timeout = timeout || 1500;
 	done = done || function () { };
-	var waiting = services.length;
+	var waiting = services.length - noreply.length;
 	var norep = { };
 	var didNotReply = { };
 	var timeoutHandle;
@@ -63,7 +63,9 @@ function observeAllServices(noreply, objGet, field, wrapper, done, timeout) {
 		didNotReply[''+num] = true;
 		observeOnce(objGet(service), field, function () {
 			delete didNotReply[''+num];
-			--waiting;
+			if (!norep[''+num]) {
+				--waiting;
+			}
 			if (!waiting) {
 				done();
 				done = function () { };
