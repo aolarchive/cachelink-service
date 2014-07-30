@@ -1,5 +1,7 @@
 # cachelink service
 
+[![Build Status](https://travis-ci.org/aol/cachelink-service.svg?branch=master)](https://travis-ci.org/aol/cachelink-service)
+
 This service fronts a Redis cache and adds the ability to set cache key associations. It should be used primarily
 for *sets* and *clears*. Gets should always go directly to Redis in production for fast access.
 
