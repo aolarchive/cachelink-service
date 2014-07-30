@@ -134,3 +134,9 @@ This enables cache to maintain a good hit-rate for those keys, even while being 
 	, clearNowAmountPerIteration : // (optional, defaults to 3) how many keys to pop and clear per iteration during the clear-now process
 }
 ```
+
+## License
+
+Copyright (c) 2013 AOL, Inc.
+All rights reserved.
+https://github.com/aol/cachelink-service/blob/master/LICENSE

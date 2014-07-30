@@ -1,5 +1,17 @@
 {
   "name": "cachelink-service",
+	"author": "Ralph Khattar <ralph.khattar@gmail.com>",
+	"homepage": "https://github.com/aol/cachelink-service",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/aol/cachelink-service.git"
+	},
+	"bugs": {
+		"url": "https://github.com/aol/cachelink-service/issues"
+	},
+	"engines": {
+		"node": "^0.10.0"
+	},
   "version": "0.1.0",
   "dependencies": {
     "winston": "^0.7.3",
@@ -16,5 +28,11 @@
   "scripts": {
     "start": "bin/cachelink",
     "test": "node_modules/mocha/bin/mocha test/lib"
-  }
+  },
+	"licenses": [
+		{
+			"type": "MIT",
+			"url": "https://github.com/aol/cachelink-service/blob/master/LICENSE"
+		}
+	]
 }
