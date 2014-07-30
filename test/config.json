@@ -2,7 +2,7 @@
 	"port": 8889,
 	"redis": {
 		"host": "localhost",
-		"port": 7711
+		"port": 6379
 	},
 	"broadcast": [
 
