@@ -77,17 +77,20 @@ describe('cache', function () {
 		});
 
 		it('should expire in the right amount of time', function (done) {
+
+			this.slow(1100);
+
 			redis('flushdb',[]).then(function () {
-				return cache.set({key: 'set2', data: 'foo', millis: 20})
+				return cache.set({key: 'set2', data: 'foo', millis: 500})
 			}).then(function (result) {
 				assert(result);
 				assert.equal(result.cacheSet, 'OK');
-				return Promise.delay(10);
+				return Promise.delay(100);
 			}).then(function () {
 				return cache.get({key: 'set2'});
 			}).then(function (data) {
 				assert.equal(data, 'foo');
-				return Promise.delay(10);
+				return Promise.delay(400);
 			}).then(function () {
 				return cache.get({key: 'set2'});
 			}).then(function (data) {
@@ -96,6 +99,7 @@ describe('cache', function () {
 		});
 
 		it('should set associations properly', function (done) {
+
 			var data = [
 				['foo', ['a1','a2','a3']],
 				['bar', ['a4','a5']],
@@ -115,7 +119,7 @@ describe('cache', function () {
 				.sort();
 			redis('flushdb',[]).then(function () {
 				return Promise.all(data.map(function (d) {
-					return cache.set({key: d[0], data: d[0], millis: 15, associations: d[1]});
+					return cache.set({key: d[0], data: d[0], millis: 1000, associations: d[1]});
 				}))
 			}).then(function (results) {
 				assert(!results.filter(function(r) {return !r.success;}).length);
@@ -139,7 +143,6 @@ describe('cache', function () {
 				assert.deepEqual(c, parentsAndMembers.map(function (i) {
 					return [i[0]];
 				}));
-				return Promise.delay(15);
 			}).then(done);
 		});
 
