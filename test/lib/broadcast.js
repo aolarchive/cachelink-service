@@ -50,7 +50,7 @@ function observeAllServicesCron(noreply, field, wrapper, done, timeout) {
 }
 
 function observeAllServices(noreply, objGet, field, wrapper, done, timeout) {
-	timeout = timeout || 1500;
+	timeout = timeout || 3000;
 	done = done || function () { };
 	var waiting = services.length - noreply.length;
 	var norep = { };
