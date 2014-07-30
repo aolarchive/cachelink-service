@@ -165,7 +165,7 @@ describe('cron', function () {
 			var times = 3;
 			var interval = c.clearLaterInterval * 1000;
 			this.slow((interval * times) + 500);
-			this.timeout((interval * times) + 1000);
+			this.timeout((interval * times) + 5000);
 			cron.checkSyncKey = function () {
 				called++;
 			};
