@@ -10,7 +10,11 @@
     "body-parser": "^1.5.0",
     "node.extend": "^1.0.10"
   },
+  "devDependencies": {
+    "mocha": "^1.21.3"
+  },
   "scripts": {
-    "start": "bin/cachelink"
+    "start": "bin/cachelink",
+    "test": "node_modules/mocha/bin/mocha test/lib"
   }
 }
