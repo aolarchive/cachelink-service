@@ -184,14 +184,14 @@ describe('cache', function () {
 				var pttlContains = pttls[0][2];
 				assertPttlCloseTo(mainKeyPttl, pttlData, 'Main Data PTTL');
 				assertPttlCloseTo(mainKeyPttl, pttlIn, 'Main In PTTL');
-				assert(pttlContains === -1, 'Main Contains PTTL (' + pttlContains + ') expected -1');
+				assert(pttlContains === -2, 'Main Contains PTTL (' + pttlContains + ') expected -2');
 				for (var i = 0; i < pttls[1].length; i++) {
 					var pttlAssoc         = assocPttls[i];
 					var pttlAssocData     = pttls[1][i][0];
 					var pttlAssocIn       = pttls[1][i][1];
 					var pttlAssocContains = pttls[1][i][2];
 					assertPttlCloseTo(pttlAssoc, pttlAssocData, 'Assoc ' + assocKeys[i] + ' Data PTTL');
-					assert(pttlAssocIn === -1, 'Assoc ' + assocKeys[i] + 'In PTTL (' + pttlAssocIn + ') expected -1');
+					assert(pttlAssocIn === -2, 'Assoc ' + assocKeys[i] + 'In PTTL (' + pttlAssocIn + ') expected -2');
 					assertPttlCloseTo(mainKeyPttl, pttlAssocContains, 'Assoc ' + assocKeys[i] + ' Contains PTTL');
 				}
 			}).then(done);

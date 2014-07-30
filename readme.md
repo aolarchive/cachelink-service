@@ -5,6 +5,8 @@ for *sets* and *clears*. Gets should always go directly to Redis in production f
 
 ## Running
 
+This service requires Redis 2.8 or newer.
+
 ```
 bin/cachelink path/to/config.json
 ```
