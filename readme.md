@@ -1,9 +1,10 @@
 # cachelink service
 
-[![Build Status](https://travis-ci.org/aol/cachelink-service.svg?branch=master)](https://travis-ci.org/aol/cachelink-service)
-
 This service fronts a Redis cache and adds the ability to set cache key associations. It should be used primarily
 for *sets* and *clears*. Gets should always go directly to Redis in production for fast access.
+
+[![NPM Version](https://badge.fury.io/js/cachelink-service.svg)](https://badge.fury.io/js/cachelink-service)
+[![Build Status](https://travis-ci.org/aol/cachelink-service.svg?branch=master)](https://travis-ci.org/aol/cachelink-service)
 
 ## Running
 
@@ -138,5 +139,7 @@ This enables cache to maintain a good hit-rate for those keys, even while being 
 ## License
 
 Copyright (c) 2013 AOL, Inc.
+
 All rights reserved.
+
 https://github.com/aol/cachelink-service/blob/master/LICENSE
