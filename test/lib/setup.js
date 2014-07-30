@@ -32,6 +32,8 @@ module.exports = function (config) {
 								result[k] = s.sort();
 							});
 							return m;
+						case '_':
+							break;
 						default:
 							result[k] = null;
 							break;

@@ -50,7 +50,7 @@ function observeAllServicesCron(noreply, field, wrapper, done, timeout) {
 }
 
 function observeAllServices(noreply, objGet, field, wrapper, done, timeout) {
-	timeout = timeout || 30;
+	timeout = timeout || 750;
 	done = done || function () { };
 	var waiting = services.length;
 	var norep = { };
@@ -111,6 +111,9 @@ function observeOnce(obj, field, wrapper, timeout) {
 }
 
 describe('broadcast', function () {
+
+	this.timeout(4000);
+	this.slow(2000);
 
 	describe('PUT /:key', function () {
 
