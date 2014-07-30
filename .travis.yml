@@ -6,3 +6,6 @@ node_js:
 
 services:
   - redis-server
+
+after_failure:
+  - cat test.log
