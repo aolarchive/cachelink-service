@@ -1,19 +1,19 @@
 {
   "name": "cachelink-service",
-	"author": "Ralph Khattar <ralph.khattar@gmail.com>",
-	"homepage": "https://github.com/aol/cachelink-service",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/aol/cachelink-service.git"
-	},
-	"bugs": {
-		"url": "https://github.com/aol/cachelink-service/issues"
-	},
-	"engines": {
-		"node": "^0.10.0"
-	},
+  "author": "Ralph Khattar <ralph.khattar@gmail.com>",
+  "homepage": "https://github.com/aol/cachelink-service",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aol/cachelink-service.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aol/cachelink-service/issues"
+  },
+  "engines": {
+    "node": "^0.10.0"
+  },
   "main": "lib/index.js",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "dependencies": {
     "winston": "^0.7.3",
     "redis": "^0.11.0",
@@ -24,16 +24,17 @@
     "node.extend": "^1.0.10"
   },
   "devDependencies": {
-    "mocha": "^1.21.3"
+    "mocha": "^1.21.3",
+    "jshint": "^2.5.2"
   },
   "scripts": {
     "start": "bin/cachelink",
-    "test": "node_modules/mocha/bin/mocha test/lib"
+    "test": "node_modules/mocha/bin/mocha test/*"
   },
-	"licenses": [
-		{
-			"type": "MIT",
-			"url": "https://github.com/aol/cachelink-service/blob/master/LICENSE"
-		}
-	]
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/aol/cachelink-service/blob/master/LICENSE"
+    }
+  ]
 }
