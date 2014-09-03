@@ -22,7 +22,7 @@ module.exports = function (config) {
 						case 'd':
 							var g = redis('get', [k]);
 							g.then(function (v) {
-								result[k] = JSON.parse(v);
+								result[k] = v;
 							});
 							return g;
 						case 'c':
