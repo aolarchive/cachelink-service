@@ -7,7 +7,11 @@
 	"broadcast": [
 
 	],
-	"clearLaterInterval": 5,
+	"basicAuth": {
+		"user": "foo",
+		"pass": "bar"
+	},
+	"clearLaterInterval": 2,
 	"clearLaterSyncKey": "___clear_later_sync",
 	"cronChannel": "___cron_channel",
 	"clearLaterSet": "___clear_later_set",
