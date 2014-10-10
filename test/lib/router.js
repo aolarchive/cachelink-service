@@ -12,7 +12,8 @@ function callRoute(httpMethod, path, data) {
 	request({
 		method : httpMethod,
 		url    : 'http://localhost:' + config.port + path,
-		json   : data
+		json   : data,
+		auth   : config.basicAuth
 	}, function () {
 
 	});
