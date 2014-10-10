@@ -8,13 +8,23 @@ var service          = cachelinkService(config, { log: function () { return log;
 
 service.start();
 
-function callRoute(httpMethod, path, data) {
+function callRouteNoAuth(httpMethod, path, data, callback) {
+	request({
+		method : httpMethod,
+		url    : 'http://localhost:' + config.port + path,
+		json   : data
+	}, callback || function () {
+
+	});
+}
+
+function callRoute(httpMethod, path, data, callback) {
 	request({
 		method : httpMethod,
 		url    : 'http://localhost:' + config.port + path,
 		json   : data,
 		auth   : config.basicAuth
-	}, function () {
+	}, callback || function () {
 
 	});
 }
@@ -31,6 +41,13 @@ function observeOnce(obj, field, wrapper) {
 describe('router', function () {
 
 	describe('GET /', function () {
+
+		it('should not work without basic auth', function (done) {
+			callRouteNoAuth('GET', '/?key=foo', null, function (e, res) {
+				assert.equal(401, res.statusCode);
+				done();
+			});
+		});
 
 		it('works', function (done) {
 			observeOnce(service.cache, 'getMany', function (options) {
