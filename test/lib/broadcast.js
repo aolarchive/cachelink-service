@@ -159,17 +159,21 @@ describe('broadcast', function () {
 		});
 
 		it('works with broadcast (0,1,3)', function (done) {
+			var waiting = 2;
+			var complete = function () { --waiting || done(); };
 			observeAllServicesCache([], 'clear', function (options) {
 				assert.deepEqual(options, {keys:['foo'],levels:4});
-			}, done);
+			}, complete);
 			callRoute(2, 'DELETE', '/foo', {levels:4}, function (e, res, data) {
+				assert(res);
+				assert.equal(200, res.statusCode);
 				assert(data);
-				assert(data.result);
-				assert(data.result.success);
+				assert(data.success);
 				assert(data.broadcastResult);
 				assert(data.broadcastResult.failed === 0);
 				assert(data.broadcastResult.responses);
 				assert(Object.keys(data.broadcastResult.responses).length === 3);
+				complete()
 			});
 		});
 	});
