@@ -32,13 +32,13 @@ for (var i = 0; i < totalServers; i++) {
 	services[i].start();
 }
 
-function callRoute(serviceNumber, httpMethod, path, data) {
+function callRoute(serviceNumber, httpMethod, path, data, done) {
 	request({
 		method : httpMethod,
 		url    : 'http://localhost:' + ports[serviceNumber] + path,
 		json   : data,
 		auth   : config.basicAuth
-	}, function () {
+	}, done || function () {
 
 	});
 }
@@ -162,7 +162,15 @@ describe('broadcast', function () {
 			observeAllServicesCache([], 'clear', function (options) {
 				assert.deepEqual(options, {keys:['foo'],levels:4});
 			}, done);
-			callRoute(2, 'DELETE', '/foo', {levels:4});
+			callRoute(2, 'DELETE', '/foo', {levels:4}, function (e, res, data) {
+				assert(data);
+				assert(data.result);
+				assert(data.result.success);
+				assert(data.broadcastResult);
+				assert(data.broadcastResult.failed === 0);
+				assert(data.broadcastResult.responses);
+				assert(Object.keys(data.broadcastResult.responses).length === 3);
+			});
 		});
 	});
 
