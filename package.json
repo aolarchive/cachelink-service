@@ -13,7 +13,7 @@
     "node": "^0.10.0"
   },
   "main": "lib/index.js",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "dependencies": {
     "winston": "^0.7.3",
     "redis": "^0.11.0",
