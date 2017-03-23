@@ -1,0 +1,56 @@
+extends: airbnb
+root: true
+rules:
+
+  max-len:
+    - error
+    - code: 120
+      tabWidth: 2
+      ignoreUrls: true
+      ignoreComments: false
+      ignoreRegExpLiterals: true
+      ignoreStrings: true
+      ignoreTemplateLiterals: true
+
+  key-spacing:
+    - error
+    - mode: minimum
+
+  no-param-reassign:
+    - error
+    - props: false
+
+  no-unused-vars:
+    - error
+    - vars: local
+      args: after-used
+      argsIgnorePattern: "^(res|next)$"
+
+  no-use-before-define:
+    - error
+    - functions: false
+      classes: true
+      variables: true
+
+  comma-dangle:
+    - error
+    - arrays: always-multiline
+      objects: always-multiline
+      imports: always-multiline
+      exports: always-multiline
+      functions: never
+
+  object-shorthand:
+    - off
+
+  padded-blocks:
+    - off
+
+  consistent-return:
+    - off
+
+  global-require:
+    - off
+
+  no-multi-spaces:
+    - off

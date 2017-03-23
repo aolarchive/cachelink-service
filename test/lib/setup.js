@@ -1,48 +1,45 @@
-var Promise = require('bluebird');
+const Promise = require('bluebird');
 
-module.exports = function (config) {
+module.exports = (testEnv) => {
 
-	config      = require('../../lib/config.js')(config);
-	var log     = require('./log.js');
-	var redis   = require('../../lib/redis.js')(config, log);
-	var cache   = require('../../lib/cache.js')(config, log, redis);
-	var cron    = require('../../lib/cron.js')(config, log, redis, cache);
+  const config  = require('../../lib/config.js')(testEnv);
+  const log     = require('./log.js');
+  const redis   = require('../../lib/redis.js')(config, log);
+  const cache   = require('../../lib/cache.js')(config, log, redis);
+  const cron    = require('../../lib/cron.js')(config, log, redis, cache);
 
-	return {
-		config     : config,
-		log        : log,
-		redis      : redis,
-		cache      : cache,
-		cron       : cron,
-		getAllData : function () {
-			return redis('keys', ['*']).then(function (keys) {
-				var result = {};
-				return Promise.all(keys.map(function (k) {
-					switch (k[0]) {
-						case 'd':
-							var g = redis('get', [k]);
-							g.then(function (v) {
-								result[k] = v;
-							});
-							return g;
-						case 'c':
-						case 'i':
-							var m = redis('smembers', [k]);
-							m.then(function (s) {
-								result[k] = s.sort();
-							});
-							return m;
-						case '_':
-							break;
-						default:
-							result[k] = null;
-							break;
-					}
-				})).then(function () {
-					return result;
-				});
-			});
-		}
-	};
+  return {
+    config,
+    log,
+    redis,
+    cache,
+    cron,
+    getAllData() {
+      return redis('keys', ['*']).then((keys) => {
+        const result = {};
+        return Promise.all(keys.map((k) => {
+          const firstChar = k[0];
+          if (firstChar === 'd') {
+            const g = redis('get', [k]);
+            g.then((v) => {
+              result[k] = v;
+            });
+            return g;
+          } else if (firstChar === 'c' || firstChar === 'i') {
+            const m = redis('smembers', [k]);
+            m.then((s) => {
+              result[k] = s.sort();
+            });
+            return m;
+          } else if (firstChar === '_') {
+            // Do nothing.
+          } else {
+            result[k] = null;
+          }
+          return undefined;
+        })).then(() => result);
+      });
+    },
+  };
 
 };
