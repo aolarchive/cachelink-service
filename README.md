@@ -11,10 +11,10 @@ for *sets* and *clears*. Gets should always go directly to Redis in production f
 This service requires Redis 2.8 or newer.
 
 ```
-bin/cachelink path/to/config.json
+bin/cachelink
 ```
 
-See config options below.
+See environment config options below.
 
 ## Why?
 
@@ -115,34 +115,29 @@ This enables cache to maintain a good hit-rate for those keys, even while being 
 	{"success": true, /* ...details... */}
 	```
 
-## Config Options
+## Config Environment Variables
 
-```
-{
-	  port      :   // the port to run the service on
-	, redis {
-		  host    :   // the redis host
-		, port    :   // the redis port
-		, prefix  :   // (optional) a prefix to use for redis keys
-	}
-	, basicAuth : { // basic auth (optional)
-		  user    :   //   username for basic auth
-		, pass    :   //   password for basic auth
-	}
-	, broadcast                  : // an array of HTTP endpoints to broadcast to during cache sets, clears, and clear-laters
-	, broadcastTimeout           : // (optional, defaults to 5 seconds) how long to wait for a response when broadcasting
-	, clearLaterInterval         : // (optional, defaults to 1 minute) how often to clear all keys in the "clear-later" set
-	, clearLaterSyncKey          : // (optional) a redis key to use for synchronizing the cron
-	, cronChannel                : // (optional) a redis channel to use for cron cluster synchronization
-	, clearLaterSet              : // (optional) a redis key to use for the "clear-later" set
-	, clearNowSet                : // (optional) a redis key to use for the "clear-now" set
-	, clearNowAmountPerIteration : // (optional, defaults to 3) how many keys to pop and clear per iteration during the clear-now process
-}
-```
+| Variable | |
+| :--- | :--- |
+| `CACHELINK_PORT` | _Optional_, defaults to `3111`. The port to run the service on. |
+| `CACHELINK_REDIS_HOST` | The redis host to connect to. |
+| `CACHELINK_REDIS_PORT` | The redis port to connect to. |
+| `CACHELINK_REDIS_PREFIX` | _Optional_. A prefix for all redis keys. |
+| `CACHELINK_BASIC_AUTH_USER` | _Optional_. A username to validate for basic auth. |
+| `CACHELINK_BASIC_AUTH_PASS` | _Optional_. A passowrd to validate for basic auth. |
+| `CACHELINK_BROADCAST` | _Optional_. A semicolon-delimited list of other cachelink base URIs to broadcast to (should exclude this cluster). |
+| `CACHELINK_BROADCAST_TIMEOUT_SECONDS` | _Optional_, defaults to `5` seconds. Timeout for broadcasts in seconds. |
+| `CACHELINK_CLEAR_LATER_INTERVAL_SECONDS` | _Optional_, defaults to `60` seconds. How often to clear all keys in the "clear-later" set. |
+| `CACHELINK_CLEAR_LATER_SYNC_KEY` | _Optional_. The redis key to use when synchronizing the cron. |
+| `CACHELINK_CRON_CHANNEL` | _Optional_. The redis channel to use for cron cluster. |
+| `CACHELINK_REDIS_CLEAR_LATER_SET` | _Optional_. The redis key to use for the "clear-later" set. |
+| `CACHELINK_REDIS_CLEAR_NOW_SET` | _Optional_. The redis key to use for the "clear-now" set. |
+| `CACHELINK_REDIS_CLEAR_AMOUNT_PER_ITERATION` | _Optional_, defaults to 3. How many keys to pop and clear per iteration during the clear-now process. |
+| `CACHELINK_REQUEST_SIZE_LIMIT` | _Optional_, defaults to `10mb`. The request size limit for incoming cachelink requests. |
 
 ## License
 
-Copyright (c) 2013 AOL, Inc.
+Copyright © 2017 AOL, Inc.
 
 All rights reserved.
 
