@@ -3,7 +3,6 @@ const request          = require('request');
 const assert           = require('assert');
 const cachelinkService = require('../../lib/index.js');
 const log              = require('./log.js');
-const initEnv          = require('../env.json');
 
 const services = [];
 const ports = [];
@@ -13,11 +12,11 @@ const getLog = () => log;
 
 const servicesReady = new Promise((resolve) => {
 
-  // Build initEnv.
+  // Build the env.
   for (let i = 0; i < totalServers; i += 1) {
-    const port = initEnv.CACHELINK_PORT + i + 1;
+    const port = Number(process.env.CACHELINK_PORT) + i + 1;
     ports.push(port);
-    envs[i] = Object.assign({}, initEnv, {
+    envs[i] = Object.assign({}, process.env, {
       CACHELINK_PORT: port,
       CACHELINK_REDIS_PREFIX: `test-${i}`,
       CACHELINK_BROADCAST: '',
@@ -68,7 +67,7 @@ function observeAllServicesCron(noreply, field, wrapper, done, timeout) {
 }
 
 function observeAllServices(noreply, objGet, field, wrapper, done, timeout) {
-  timeout = timeout || 3000;
+  timeout = timeout || 5000;
   done = done || (() => { });
   let waiting = services.length - noreply.length;
   const norep = { };
@@ -144,8 +143,8 @@ function observeOnce(obj, field, wrapper, timeout) {
 
 describe('broadcast', function describeBroadcast() {
 
-  this.timeout(4000);
-  this.slow(2000);
+  this.timeout(5500);
+  this.slow(3000);
 
   describe('PUT /:key', () => {
 

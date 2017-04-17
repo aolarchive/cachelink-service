@@ -1,38 +1,32 @@
 const Promise = require('bluebird');
 const assert  = require('assert');
-const initEnv = require('../env.json');
-const setup   = require('./setup.js')(initEnv);
-
-const config  = setup.config;
-const redis   = setup.redis;
-const cache   = setup.cache;
-const log     = setup.log;
-
-const cron    = require('../../lib/cron.js')(config, log, redis, cache);
-
-const getAllData = setup.getAllData;
+const setup   = require('./setup.js');
+const buildCron = require('../../lib/cron.js');
 
 describe('cron', () => {
+
+  const { config, redis, cache, log, getAllData } = setup();
+  const cron = buildCron(config, log, redis, cache);
 
   describe('#startClearNowProcess', () => {
 
     it('should move all the keys from the clear-later set to the clear-now set', (done) => {
-      const cronInstance = require('../../lib/cron.js')(config, log, redis, cache);
+      const cronInstance = buildCron(config, log, redis, cache);
       let clearNowCalled = false;
       const clearNowOld = cronInstance.clearNow;
       const clearKeys = ['a', 'b', 'c'];
       const clearNowDone = new Promise((resolve) => {
         cronInstance.clearNow = () => {
           clearNowCalled = true;
-          return redis('smembers', [config.clearNowSet]).then((clearNowSet) => {
+          return redis('smembers', config.clearNowSet).then((clearNowSet) => {
             assert.deepEqual(clearKeys, clearNowSet.sort());
-            return clearNowOld().then(resolve);
+            clearNowOld().then(resolve);
           });
         };
       });
-      redis('flushdb', [])
+      redis.clearAllKeys()
         .then(() => cache.clearLater({ keys: clearKeys }))
-        .then(() => redis('smembers', [config.clearLaterSet]))
+        .then(() => redis('smembers', config.clearLaterSet))
         .then((members) => {
           assert.deepEqual(clearKeys, members.sort());
           return cronInstance.startClearNowProcess();
@@ -43,8 +37,8 @@ describe('cron', () => {
           return clearNowDone;
         })
         .then(() => Promise.all([
-          redis('smembers', [config.clearLaterSet]),
-          redis('smembers', [config.clearNowSet]),
+          redis('smembers', config.clearLaterSet),
+          redis('smembers', config.clearNowSet),
         ]))
         .then((clearSets) => {
           assert.deepEqual([], clearSets[0]);
@@ -57,7 +51,7 @@ describe('cron', () => {
   describe('#clearNow', () => {
 
     it('should empty the clear-now set and clear all those keys', (done) => {
-      redis('flushdb', [])
+      redis.clearAllKeys()
         .then(() => Promise.all([
           cache.set({ key: 'A', data: '_', millis: 10000 }),
           cache.set({ key: 'B', data: '_', millis: 10000 }),
@@ -66,7 +60,7 @@ describe('cron', () => {
           cache.set({ key: 'E', data: '_', millis: 10000 }),
           cache.set({ key: 'F', data: '_', millis: 10000 }),
           cache.set({ key: 'G', data: '_', millis: 10000, associations: ['A'] }),
-          redis('sadd', [config.clearNowSet, 'B', 'C']),
+          redis('sadd', config.clearNowSet, 'B', 'C'),
         ]))
         .then(() => cron.clearNow()).then(() => getAllData())
         .then((allData) => {
@@ -86,30 +80,35 @@ describe('cron', () => {
 
   describe('#listenForMessages', () => {
 
-    it('should run clearNow when it receives a "startClear" message', (done) => {
-      const cronInstance = require('../../lib/cron.js')(config, log, redis, cache);
+    it('should run clearNow when it receives a "startClear" message', function testListenForMessagesSuccess(done) {
+      this.timeout(3000);
+      this.slow(2000);
+      const cronInstance = buildCron(config, log, redis, cache);
       cronInstance.listenForMessages();
       let startedClear = false;
       cronInstance.clearNow = () => {
         startedClear = true;
       };
       redis.publish(config.cronChannel, 'startClear');
-      Promise.delay(20).then(() => {
+      Promise.delay(700).then(() => {
         assert(startedClear);
       }).then(done);
     });
 
-    it('should do nothing if it receives an invalid message', (done) => {
-      const cronInstance = require('../../lib/cron.js')(config, log, redis, cache);
+    it('should do nothing if it receives an invalid message', function testListenForMessagesInvalid(done) {
+      this.timeout(3000);
+      this.slow(2000);
+      const cronInstance = buildCron(config, log, redis, cache);
       cronInstance.listenForMessages();
       let startedClear = false;
       cronInstance.clearNow = () => {
         startedClear = true;
       };
       redis.publish(config.cronChannel, 'invalidMessage');
-      Promise.delay(20).then(() => {
+      Promise.delay(700).then(() => {
         assert(!startedClear);
         redis.unsubscribe();
+        return null;
       }).then(done);
     });
   });
@@ -119,19 +118,19 @@ describe('cron', () => {
     it('should set the sync key if it is not already set and start the clear process', (done) => {
       const clearIntervalMillis = config.clearLaterIntervalSeconds * 1000;
       const syncKey = config.clearLaterSyncKey;
-      const cronInstance = require('../../lib/cron.js')(config, log, redis, cache);
+      const cronInstance = buildCron(config, log, redis, cache);
       let startedClearNow = false;
       cronInstance.startClearNowProcess = () => {
         startedClearNow = true;
       };
-      redis('flushdb', [])
+      redis.clearAllKeys()
         .then(() => cronInstance.checkSyncKey())
         .then((success) => {
           assert(!!success);
           assert(startedClearNow);
           return Promise.all([
-            redis('pttl', [syncKey]),
-            redis('get', [syncKey]),
+            redis('pttl', syncKey),
+            redis('get', syncKey),
           ]);
         })
         .then((result) => {
@@ -142,16 +141,16 @@ describe('cron', () => {
 
     it('should fail to set the sync key if it is already set and NOT start the clear process', (done) => {
       const syncKey = config.clearLaterSyncKey;
-      const cronInstance = require('../../lib/cron.js')(config, log, redis, cache);
+      const cronInstance = buildCron(config, log, redis, cache);
       let startedClearNow = false;
       cronInstance.startClearNowProcess = () => { startedClearNow = true; };
-      redis('flushdb', [])
-        .then(() => redis('set', [syncKey, 'foo', 'px', 3000, 'nx']))
+      redis.clearAllKeys()
+        .then(() => redis('set', syncKey, 'foo', 'px', 3000, 'nx'))
         .then(() => cronInstance.checkSyncKey())
         .then((success) => {
           assert(!success);
           assert(!startedClearNow);
-          return redis('get', [syncKey]);
+          return redis('get', syncKey);
         })
         .then((result) => {
           assert(result === 'foo');
@@ -165,7 +164,7 @@ describe('cron', () => {
     it('should call #checkSyncKey at the cron interval', function startCronShouldCallCheckSyncKeyAtCron(done) {
       const c = Object.assign({}, config);
       c.clearLaterIntervalSeconds = 0.2;
-      const cronInstance = require('../../lib/cron.js')(c, log, redis, cache);
+      const cronInstance = buildCron(c, log, redis, cache);
       let called = 0;
       const times = 3;
       const interval = c.clearLaterIntervalSeconds * 1000;

@@ -1,4 +1,4 @@
-# cachelink service
+# cachelink
 
 This service fronts a Redis cache and adds the ability to set cache key associations. It should be used primarily
 for *sets* and *clears*. Gets should always go directly to Redis in production for fast access.
@@ -8,7 +8,7 @@ for *sets* and *clears*. Gets should always go directly to Redis in production f
 
 ## Running
 
-This service requires Redis 2.8 or newer.
+This service requires Redis 3 or newer.
 
 ```
 bin/cachelink
@@ -72,56 +72,88 @@ This enables cache to maintain a good hit-rate for those keys, even while being 
 
 ## API
 
-- Get an item: `GET /:key`
-	```
-	GET /foo
-	=>
-	'fooValue'
-	```
+### Get an Item
 
-- Get multiple items: `GET /?k=:key1&k=:key2&...`
-	```
-	GET /?k=foo&k=bar&k=baz
-	=>
-	["fooValue", "barValue", "bazValue"]
-	```
+```
+GET /foo
+```
+Returns
+```
+fooValue
+```
 
-- Set an item: `PUT /`
-	```
-	PUT /
-	{"key":"foo", "data":"fooValue", "seconds":1.5, "associations":["bar", "baz"]}
-	=>
-	{"success": true, /* ...details... */}
-	```
+### Get Multiple Items
 
-- Clear an item: `DELETE /:key`
-	```
-	DELETE /foo
-	=>
-	{"success": true, /* ...details... */}
-	```
-	You can also specify the amount of association levels to clear:
-	```
-	DELETE /foo?levels=all
-	DELETE /foo?levels=none
-	DELETE /foo?levels=3
-	```
+```
+GET /?k=foo&k=bar&k=baz
+```
+Returns
+```
+["fooValue", "barValue", "bazValue"]
+```
 
-- Clear an item later: `PUT /clear-later`
-	```
-	PUT /clear-later
-	{"keys":["foo", "bar"]}
-	=>
-	{"success": true, /* ...details... */}
-	```
+### Set an Item
+
+```
+PUT /
+{
+  "key": "foo",
+  "data": "fooValue",
+  "seconds": 1.5,
+  "associations": ["bar", "baz"]
+}
+```
+Returns
+```
+{
+  "success": true,
+  ...
+}
+```
+
+### Clear an Item
+
+```
+DELETE /foo
+```
+Returns
+```
+{
+  "success": true,
+  ...
+}
+```
+
+You can also specify the amount of association levels to clear:
+```
+DELETE /foo?levels=all
+DELETE /foo?levels=none
+DELETE /foo?levels=3
+```
+
+### Clear an Item Later
+
+```
+PUT /clear-later
+{
+  "keys": ["foo", "bar"]
+}
+```
+Returns
+```
+{
+  "success": true,
+  ...
+}
+```
 
 ## Config Environment Variables
 
 | Variable | |
 | :--- | :--- |
 | `CACHELINK_PORT` | _Optional_, defaults to `3111`. The port to run the service on. |
-| `CACHELINK_REDIS_HOST` | The redis host to connect to. |
-| `CACHELINK_REDIS_PORT` | The redis port to connect to. |
+| `CACHELINK_REDIS_NODES` | Redis node information. Should be a semicolon-delimiter list of host:port values. |
+| `CACHELINK_REDIS_CLUSTER` | _Optional_. Whether to use redis cluster. Defaults to `false`. |
 | `CACHELINK_REDIS_PREFIX` | _Optional_. A prefix for all redis keys. |
 | `CACHELINK_BASIC_AUTH_USER` | _Optional_. A username to validate for basic auth. |
 | `CACHELINK_BASIC_AUTH_PASS` | _Optional_. A passowrd to validate for basic auth. |
@@ -137,8 +169,6 @@ This enables cache to maintain a good hit-rate for those keys, even while being 
 
 ## License
 
-Copyright © 2017 AOL, Inc.
+[The MIT License (MIT)](https://github.com/aol/cachelink-service/blob/master/LICENSE)
 
-All rights reserved.
-
-https://github.com/aol/cachelink-service/blob/master/LICENSE
+Copyright © 2017 AOL, Inc. All rights reserved.
