@@ -1,8 +1,8 @@
 const Promise = require('bluebird');
 
-module.exports = (testEnv) => {
+module.exports = testEnv => {
 
-  const config  = require('../../lib/config.js')(testEnv);
+  const config  = require('../../lib/config.js')(testEnv || process.env);
   const log     = require('./log.js');
   const redis   = require('../../lib/redis.js')(config, log);
   const cache   = require('../../lib/cache.js')(config, log, redis);
@@ -15,18 +15,18 @@ module.exports = (testEnv) => {
     cache,
     cron,
     getAllData() {
-      return redis('keys', ['*']).then((keys) => {
+      return redis.keys('*').then((keys) => {
         const result = {};
         return Promise.all(keys.map((k) => {
           const firstChar = k[0];
           if (firstChar === 'd') {
-            const g = redis('get', [k]);
+            const g = redis('get', k);
             g.then((v) => {
               result[k] = v;
             });
             return g;
           } else if (firstChar === 'c' || firstChar === 'i') {
-            const m = redis('smembers', [k]);
+            const m = redis('smembers', k);
             m.then((s) => {
               result[k] = s.sort();
             });

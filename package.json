@@ -13,13 +13,13 @@
     "node": "^6.0"
   },
   "main": "lib/index.js",
-  "version": "5.0.0",
+  "version": "6.0.0",
   "dependencies": {
     "basic-auth": "^1.1.0",
     "bluebird": "^3.5.0",
     "body-parser": "^1.17.1",
     "express": "^4.15.2",
-    "redis": "^2.7.1",
+    "ioredis": "^2.5.0",
     "request": "^2.81.0",
     "uuid": "^3.0.1",
     "winston": "^2.3.1"
@@ -35,7 +35,11 @@
   },
   "scripts": {
     "start": "bin/cachelink",
-    "test": "node_modules/mocha/bin/mocha test/*"
+    "test": "npm run test-lint && npm run test-single && npm run test-cluster",
+    "test-lint": "test/eslint.sh",
+    "test-single": "export CACHELINK_TEST_MODE=single && npm run test-run",
+    "test-cluster": "export CACHELINK_TEST_MODE=cluster && npm run test-run",
+    "test-run": "test/run.sh"
   },
   "licenses": [
     {

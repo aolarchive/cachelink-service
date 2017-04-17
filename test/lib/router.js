@@ -1,31 +1,36 @@
 const request          = require('request');
 const assert           = require('assert');
 const cachelinkService = require('../../lib/index.js');
-const initEnv          = require('../env.json');
 const log              = require('./log.js');
 
-const service = cachelinkService(initEnv, { log: () => log });
-
-service.start();
+const cachelink = new Promise((resolve) => {
+  const service = cachelinkService(process.env, { log: () => log });
+  service.start();
+  resolve(service);
+});
 
 function callRouteNoAuth(httpMethod, path, data, callback) {
-  request({
-    method: httpMethod,
-    url: `http://localhost:${service.config.port}${path}`,
-    json: data,
-  }, callback || (() => {}));
+  cachelink.then((service) => {
+    request({
+      method: httpMethod,
+      url: `http://localhost:${service.config.port}${path}`,
+      json: data,
+    }, callback || (() => {}));
+  });
 }
 
 function callRoute(httpMethod, path, data, callback) {
-  const basicAuth = (service.config.basicAuthUser && service.config.basicAuthPass)
-    ? { user: service.config.basicAuthUser, pass: service.config.basicAuthPass }
-    : undefined;
-  request({
-    method: httpMethod,
-    url: `http://localhost:${service.config.port}${path}`,
-    json: data,
-    auth: basicAuth,
-  }, callback || (() => {}));
+  cachelink.then((service) => {
+    const basicAuth = (service.config.basicAuthUser && service.config.basicAuthPass)
+      ? { user: service.config.basicAuthUser, pass: service.config.basicAuthPass }
+      : undefined;
+    request({
+      method: httpMethod,
+      url: `http://localhost:${service.config.port}${path}`,
+      json: data,
+      auth: basicAuth,
+    }, callback || (() => {}));
+  });
 }
 
 function observeOnce(obj, field, wrapper) {
@@ -38,6 +43,16 @@ function observeOnce(obj, field, wrapper) {
 }
 
 describe('router', () => {
+
+  let service;
+
+  before(function beforeRouter() {
+    this.timeout(5000);
+    return cachelink.then((s) => {
+      service = s;
+    });
+  });
+
 
   describe('GET /', () => {
 

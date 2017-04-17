@@ -1,19 +1,15 @@
 const Promise = require('bluebird');
 const assert  = require('assert');
-const initEnv = require('../env.json');
-const setup   = require('./setup.js')(initEnv);
-
-const config     = setup.config;
-const redis      = setup.redis;
-const cache      = setup.cache;
-const getAllData = setup.getAllData;
+const setup   = require('./setup.js');
 
 describe('cache', () => {
+
+  const { config, redis, cache, getAllData } = setup();
 
   describe('#get', () => {
 
     it('should return a value if set', (done) => {
-      redis('flushdb', [])
+      redis.clearAllKeys()
         .then(() => cache.set({ key: 'foo', data: 'bar', millis: 5 * 1000 }))
         .then((result) => {
           assert(result && result.cacheSet === 'OK');
@@ -27,7 +23,7 @@ describe('cache', () => {
     });
 
     it('should return null if not set', (done) => {
-      redis('flushdb', [])
+      redis.clearAllKeys()
         .then(() => cache.get({ key: 'notset' }))
         .then((result) => {
           assert.equal(result, null);
@@ -40,7 +36,7 @@ describe('cache', () => {
 
     it('should return multiple values if they are set', (done) => {
       const data = [['a', 1], ['b', 2], ['c', 3], ['d', 4]];
-      redis('flushdb', [])
+      redis.clearAllKeys()
         .then(() => Promise.all(data.map(d => cache.set({ key: d[0], data: d[1], millis: 1000 }))))
         .then(() => cache.getMany({ keys: data.map(d => d[0]) }))
         .then((values) => {
@@ -52,7 +48,7 @@ describe('cache', () => {
     it('should return nulls where keys are not set', (done) => {
       const data = [['a', 1], ['b', 2], ['c', 3], ['d', 4]];
       const empty = ['e', 'f', 'g'];
-      redis('flushdb', [])
+      redis.clearAllKeys()
         .then(() => Promise.all(data.map(d => cache.set({ key: d[0], data: d[1], millis: 1000 }))))
         .then(() => cache.getMany({ keys: data.map(d => d[0]).concat(empty) }))
         .then((values) => {
@@ -68,7 +64,7 @@ describe('cache', () => {
   describe('#set', () => {
 
     it('should set a value properly', (done) => {
-      redis('flushdb', [])
+      redis.clearAllKeys()
         .then(() => cache.set({ key: 'set1', data: 'bar', millis: 5 * 1000 }))
         .then((result) => {
           assert(result);
@@ -81,7 +77,7 @@ describe('cache', () => {
 
       this.slow(1100);
 
-      redis('flushdb', [])
+      redis.clearAllKeys()
         .then(() => cache.set({ key: 'set2', data: 'foo', millis: 500 }))
         .then((result) => {
           assert(result);
@@ -115,11 +111,11 @@ describe('cache', () => {
         .concat(keys.map(k => `i:${k}`))
         .concat(parentsAndMembers.map(i => `c:${i[1]}`))
         .sort();
-      redis('flushdb', [])
+      redis.clearAllKeys()
         .then(() => Promise.all(data.map(d => cache.set({ key: d[0], data: d[0], millis: 1000, associations: d[1] }))))
         .then((results) => {
           assert(!results.filter(r => !r.success).length);
-          return redis('keys', ['*']);
+          return redis.keys('*');
         })
         .then((allKeys) => {
           allKeys.sort();
@@ -128,12 +124,12 @@ describe('cache', () => {
         })
         .then((r) => {
           assert.deepEqual(r, keys);
-          return Promise.all(keys.map(k => redis('smembers', [`i:${k}`])));
+          return Promise.all(keys.map(k => redis('smembers', `i:${k}`)));
         })
         .then((m) => {
           m = m.map(i => i.sort());
           assert.deepEqual(m, members);
-          return Promise.all(parentsAndMembers.map(i => redis('smembers', [`c:${i[1]}`])));
+          return Promise.all(parentsAndMembers.map(i => redis('smembers', `c:${i[1]}`)));
         })
         .then((c) => {
           assert.deepEqual(c, parentsAndMembers.map(i => [i[0]]));
@@ -149,27 +145,27 @@ describe('cache', () => {
       const assocKeys = [];
       const assocPttls = [];
       const assertPttlCloseTo = (expect, actual, which) => {
-        assert(actual <= expect && actual > expect - 15,
-          `${which} (${actual}) expected between ${expect - 15} and ${expect}`);
+        assert(actual <= expect && actual > expect - 50,
+          `${which} (${actual}) expected between ${expect - 30} and ${expect}`);
       };
       for (let i = 1; i <= total; i += 1) {
         assocKeys.push(`s${i}`);
         assocPttls.push(i * millisStep);
         assocSets.push({ key: `s${i}`, data: `sd${i}`, millis: i * millisStep });
       }
-      redis('flushdb', [])
+      redis.clearAllKeys()
         .then(() => Promise.all(assocSets.map(cache.set)))
         .then(() => cache.set({ key: 'X', data: 'Xd', millis: mainKeyPttl, associations: assocKeys }))
         .then(() => Promise.all([
           Promise.all([
-            redis('pttl', ['d:X']),
-            redis('pttl', ['i:X']),
-            redis('pttl', ['c:X']),
+            redis('pttl', 'd:X'),
+            redis('pttl', 'i:X'),
+            redis('pttl', 'c:X'),
           ]),
           Promise.all(assocKeys.map(k => Promise.all([
-            redis('pttl', [`d:${k}`]),
-            redis('pttl', [`i:${k}`]),
-            redis('pttl', [`c:${k}`]),
+            redis('pttl', `d:${k}`),
+            redis('pttl', `i:${k}`),
+            redis('pttl', `c:${k}`),
           ]))),
         ]))
         .then((pttls) => {
@@ -196,7 +192,7 @@ describe('cache', () => {
   describe('#clear', () => {
 
     it('should perform a basic clear (no associations) properly', (done) => {
-      redis('flushdb', [])
+      redis.clearAllKeys()
         .then(() => cache.set({ key: 'hello', data: 'foo', millis: 10000 }))
         .then(() => cache.get({ key: 'hello' }))
         .then((data) => {
@@ -290,7 +286,7 @@ describe('cache', () => {
           ['kA1'],
         ],
       ];
-      const testClearAssociations = (clearKeys, afterClear, cleared) => redis('flushdb', [])
+      const testClearAssociations = (clearKeys, afterClear, cleared) => redis.clearAllKeys()
           .then(() => Promise.all(
             data.map(d => cache.set({ key: d[0], data: d[1], millis: 1000000, associations: d[2] }))
           ))
@@ -321,11 +317,11 @@ describe('cache', () => {
 
     it('should append to the clear-later set', (done) => {
       let mem = ['a', 'b', 'c', 'd'];
-      redis('flushdb', [])
+      redis.clearAllKeys()
         .then(() => cache.clearLater({ keys: mem }))
         .then((added) => {
           assert.deepEqual(added, { success: true, added: 4 });
-          return redis('smembers', [config.clearLaterSet]);
+          return redis('smembers', config.clearLaterSet);
         })
         .then((members) => {
           assert.deepEqual(members.sort(), mem);
@@ -335,7 +331,7 @@ describe('cache', () => {
         })
         .then((added) => {
           assert.deepEqual(added, { success: true, added: 3 });
-          return redis('smembers', [config.clearLaterSet]);
+          return redis('smembers', config.clearLaterSet);
         })
         .then((members) => {
           assert.deepEqual(members.sort(), mem);
@@ -350,7 +346,7 @@ describe('cache', () => {
       this.slow(100);
       const keyCount    = 30;
       const clearNowSet = config.clearNowSet;
-      redis('flushdb', [])
+      redis.clearAllKeys()
         .then(() => {
           const waiting = [];
           for (let i = 1; i <= keyCount; i += 1) {
@@ -359,7 +355,7 @@ describe('cache', () => {
               assoc.push(`k${j}`);
             }
             waiting.push(cache.set({ key: `k${i}`, data: `v${i}`, millis: 100000, associations: assoc }));
-            waiting.push(redis('sadd', [clearNowSet, `k${i}`]));
+            waiting.push(redis('sadd', clearNowSet, `k${i}`));
           }
           return Promise.all(waiting);
         })
