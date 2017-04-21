@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-OUT=$DIR/../../build/out-single.log
+OUT_DIR="$(dirname "$(dirname $DIR)")/build"
+OUT="$OUT_DIR/out-single.log"
+
+mkdir -p $OUT_DIR
 
 # Stop any previous redis.
 echo "Cleaning up old redis instances..."
