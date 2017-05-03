@@ -4,6 +4,7 @@ test.log
 atlassian-ide-plugin.xml
 .DS_Store
 dump.rdb
-/build
+/build/*
+!/build/README.md
 npm-debug.log*
 /test/env/out*
