@@ -1,0 +1,15 @@
+.git*
+.DS_Store
+.idea
+.travis.yml
+.dockerignore
+atlassian-ide-plugin.xml
+node_modules
+npm-debug.log
+build/
+test/
+Dockerfile
+docker
+README.md
+npm-debug.log*
+dump.rdb
