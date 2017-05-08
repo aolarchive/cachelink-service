@@ -152,7 +152,7 @@ Returns
 | Variable | |
 | :--- | :--- |
 | `CACHELINK_PORT` | _Optional_, defaults to `3111`. The port to run the service on. |
-| `CACHELINK_REDIS_NODES` | Redis node information. Should be a semicolon-delimiter list of host:port values. |
+| `CACHELINK_REDIS_NODES` | Redis node information. Should be a semicolon-delimited list of `host:port` values. Should have a single entry unless in cluster mode, for example: `redis-host-1:6381;redis-host-2:6382;redis-host-3:6383`. |
 | `CACHELINK_REDIS_CLUSTER` | _Optional_. Whether to use redis cluster. Defaults to `false`. |
 | `CACHELINK_REDIS_PREFIX` | _Optional_. A prefix for all redis keys. |
 | `CACHELINK_BASIC_AUTH_USER` | _Optional_. A username to validate for basic auth. |
