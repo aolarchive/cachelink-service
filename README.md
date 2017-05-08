@@ -156,7 +156,7 @@ Returns
 | `CACHELINK_REDIS_CLUSTER` | _Optional_. Whether to use redis cluster. Defaults to `false`. |
 | `CACHELINK_REDIS_PREFIX` | _Optional_. A prefix for all redis keys. |
 | `CACHELINK_BASIC_AUTH_USER` | _Optional_. A username to validate for basic auth. |
-| `CACHELINK_BASIC_AUTH_PASS` | _Optional_. A passowrd to validate for basic auth. |
+| `CACHELINK_BASIC_AUTH_PASS` | _Optional_. A password to validate for basic auth. |
 | `CACHELINK_BROADCAST` | _Optional_. A semicolon-delimited list of other cachelink base URIs to broadcast to (should exclude this cluster). |
 | `CACHELINK_BROADCAST_TIMEOUT_SECONDS` | _Optional_, defaults to `5` seconds. Timeout for broadcasts in seconds. |
 | `CACHELINK_CLEAR_LATER_INTERVAL_SECONDS` | _Optional_, defaults to `60` seconds. How often to clear all keys in the "clear-later" set. |
@@ -166,6 +166,12 @@ Returns
 | `CACHELINK_REDIS_CLEAR_NOW_SET` | _Optional_. The redis key to use for the "clear-now" set. |
 | `CACHELINK_REDIS_CLEAR_AMOUNT_PER_ITERATION` | _Optional_, defaults to 3. How many keys to pop and clear per iteration during the clear-now process. |
 | `CACHELINK_REQUEST_SIZE_LIMIT` | _Optional_, defaults to `10mb`. The request size limit for incoming cachelink requests. |
+| `CACHELINK_HTTPS_PRIVATE_KEY` | _Optional_, defaults to nothing. HTTPS private key in PEM format. This is required for HTTPS. |
+| `CACHELINK_HTTPS_CERTIFICATE` | _Optional_, defaults to nothing. HTTPS cert chain in PEM format. This is required for HTTPS. |
+| `CACHELINK_HTTPS_CA` | _Optional_, defaults to nothing. Optionally override the trusted CA certificates. Default is to trust the well-known CAs curated by Mozilla. |
+| `CACHELINK_HTTPS_REQUEST_CERT` | _Optional_, defaults to `true`. Whether to authenticate the remote peer by requesting a certificate. This is only used when HTTPS is on. |
+| `CACHELINK_HTTPS_REJECT_UNAUTHORIZED` | _Optional_, defaults to `true`. If `true` the server will reject any connection which is not authorized with the list of supplied CAs. This option only has an effect if `CACHELINK_HTTPS_REQUEST_CERT` is `true`. This is only used when HTTPS is on. |
+
 
 ## License
 
