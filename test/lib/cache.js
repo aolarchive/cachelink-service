@@ -145,8 +145,8 @@ describe('cache', () => {
       const assocKeys = [];
       const assocPttls = [];
       const assertPttlCloseTo = (expect, actual, which) => {
-        assert(actual <= expect && actual > expect - 50,
-          `${which} (${actual}) expected between ${expect - 30} and ${expect}`);
+        assert(actual <= expect && actual > expect - 100,
+          `${which} (${actual}) expected between ${expect - 100} and ${expect}`);
       };
       for (let i = 1; i <= total; i += 1) {
         assocKeys.push(`s${i}`);
