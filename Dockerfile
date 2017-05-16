@@ -15,4 +15,4 @@ RUN adduser -Ds /bin/bash cachelink && chown -R cachelink:cachelink /cachelink
 USER cachelink
 
 EXPOSE 3111
-ENTRYPOINT ./bin/cachelink
+ENTRYPOINT ["./bin/cachelink"]
